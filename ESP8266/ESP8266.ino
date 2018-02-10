@@ -1,9 +1,10 @@
 //power usage calculator calibrated on esp8266
 //ASC712 5v -----> 5.5 to 3.3 logic converter -----> A(0) ESP8266
 #include <Filters.h>
+#include <ESP8266WiFi.h>
 
 
-//==================currrent calculator
+//==================currrent calculator==================
 RunningStatistics inputStats;                 // create statistics to look at the raw test signal
 float testFrequency = 60;                     // test signal frequency (Hz)
 float windowLength = 20.0/testFrequency;     // how long to average the signal, for statistist
@@ -16,9 +17,33 @@ unsigned long samplingPeriod = 1000; // in milliseconds
 // Track time in milliseconds since last reading 
 unsigned long previousMillis = 0;
 
+//==================switch==================
+const int switchPin = 0;
+const int switchStartValue = 0;
+
+
+//==================wifi==================
+const char * SSID = "";
+const char * PASSWORD = "";
+
+
+
+//==================led diodes==================
+const int blueLED = 4;
+const int greenLED = 3;
+const int redLED = 2;
+
+
 void setup() {
+  Serial.begin( 57600 );
+
+  setLED();
+
+  pinMode(switchPin, OUTPUT);
+  digitalWrite(switchPin, switchStartValue);
   inputStats.setWindowSecs( windowLength );
-  Serial.begin( 57600 );    // start the serial port
+  
+  connectWiFi();  
 }
 
 void loop() {
@@ -28,6 +53,34 @@ void loop() {
     calculatePowerConsumption();        
 
     yield();
+}
+
+
+//---------------------------functions------------------------
+
+void setLED()
+{
+  pinMode(blueLED, OUTPUT);
+  digitalWrite(blueLED, LOW);
+  pinMode(greenLED, OUTPUT);
+  digitalWrite(greenLED, LOW);
+  pinMode(redLED, OUTPUT);
+  digitalWrite(redLED, LOW);
+}
+
+void connectWiFi()
+{
+  
+  WiFi.begin(SSID, PASSWORD);
+
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(50);
+    yield();
+  }
+  Serial.print("Connected, IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void calculatePowerConsumption()

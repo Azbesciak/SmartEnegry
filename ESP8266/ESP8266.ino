@@ -46,7 +46,7 @@ const float intercept = -.0781; // to be adjusted based on calibration testing
 const float slope = .0179; // to be adjusted based on calibration testing
 
 const int voltage = 230;
-unsigned long sampling_period = 5000; // in milliseconds
+unsigned long sampling_period = 1000; // in milliseconds
 // Track time in milliseconds since last reading
 unsigned long previousMillis = 0;
 
@@ -83,7 +83,7 @@ const int BLUE_LED = D4;
 const int GREEN_LED = D3;
 const int RED_LED = D2;
 
-
+const int main_loop_delay = 10;
 void setup() {
   Serial.begin( 57600 );
 
@@ -110,8 +110,15 @@ void loop() {
   }
 
   mqtt_client.loop();
-  delay(200);
-  yield();  //give esp8266 some time
+  delay(main_loop_delay);
+  //non-blocking delay
+  /*
+  long cur_millis = millis();
+  while(millis() - cur_millis < main_loop_delay)
+  {
+    yield();//give esp8266 some time
+  }
+  */
 }
 
 
@@ -334,7 +341,6 @@ double calculate_power_consumption()
   Serial.print( "\n" );
 
   Serial.print("in power consumption function ");
-  Serial.print(current_amps);
   Serial.println(power);
 #endif
   return power;

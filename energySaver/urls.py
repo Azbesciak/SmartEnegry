@@ -13,10 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.urls import include, path
+from django.urls import path
+from django.urls import include as inc
 from django.contrib import admin
 
+
+from django.conf.urls import url, include
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('polls/', include('polls.urls')),
+    url(r'^', include('api.urls')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', inc('api.urls')),
     path('admin/', admin.site.urls),
 ]

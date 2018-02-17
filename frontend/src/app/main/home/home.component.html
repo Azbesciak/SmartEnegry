@@ -1,0 +1,10 @@
+<div>
+  <md2-datepicker type="datetime" [(ngModel)]="dateFrom"></md2-datepicker>
+  <md2-datepicker type="datetime" [(ngModel)]="dateTo"></md2-datepicker>
+  <button mat-button (click)="getConsumptions()">Search</button>
+  <mat-select placeholder="Device">
+    <mat-option *ngFor="let dev of devices" [value]="dev.id">
+      {{ dev.id }}
+    </mat-option>
+  </mat-select>
+</div>

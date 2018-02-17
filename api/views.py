@@ -19,7 +19,7 @@ def get_devices(dev, many=True):
 
 
 def tsTodate(ts):
-    return datetime.datetime.utcfromtimestamp(int(ts)).strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.datetime.utcfromtimestamp(int(ts)/1000).strftime('%Y-%m-%d %H:%M:%S')
 
 
 @api_view(['GET'])
@@ -49,5 +49,3 @@ def change_state(request, device_id, state):
 @api_view(["GET"])
 def devices(request):
     return get_devices(Device.objects.all())
-
-

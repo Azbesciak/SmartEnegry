@@ -1,10 +1,25 @@
+<ngx-charts-line-chart
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="chartData"
+  [gradient]="gradient"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="showLegend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [autoScale]="autoScale"
+  (select)="onSelect($event)">
+</ngx-charts-line-chart>
 <div>
   <md2-datepicker type="datetime" [(ngModel)]="dateFrom"></md2-datepicker>
   <md2-datepicker type="datetime" [(ngModel)]="dateTo"></md2-datepicker>
-  <button mat-button (click)="getConsumptions()">Search</button>
-  <mat-select placeholder="Device">
-    <mat-option *ngFor="let dev of devices" [value]="dev.id">
-      {{ dev.id }}
-    </mat-option>
-  </mat-select>
+  <button mat-button (click)="getConsumptions()" [disabled]="!canSearch()">Search</button>
 </div>
+<mat-select placeholder="Device" [(value)]="deviceId">
+  <mat-option *ngFor="let dev of devices" [value]="dev.id">
+    {{ dev.id }}
+  </mat-option>
+</mat-select>

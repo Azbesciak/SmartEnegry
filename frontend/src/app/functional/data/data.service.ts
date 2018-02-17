@@ -12,7 +12,7 @@ export class DataService {
     return this.get("consumptions")
   }
 
-  getConsumptionsBetween(devId:number, dateFrom:number = 0, dateTo:number = new Date().getTime()) {
+  getConsumptionsBetween(devId: number, dateFrom: number, dateTo: number) {
     return this.get(`consumptions/${devId}/${dateFrom}/${dateTo}`)
   }
 

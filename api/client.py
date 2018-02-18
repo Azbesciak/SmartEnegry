@@ -3,6 +3,10 @@ import threading
 from .models import Consumption, Device
 from time import gmtime, strftime
 
+MQTT_PORT = 1884
+
+MQTT_HOST = "127.0.0.1"
+
 DEVICE_ID = '1'
 
 POWER_TOPIC = "/power/response"
@@ -97,14 +101,14 @@ def start_client_thread():
     client.on_connect = on_connect
     client.on_message = on_message
 
-    client.connect("127.0.0.1", 1884, 60)
+    client.connect(MQTT_HOST, MQTT_PORT, 60)
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
     publisher = myThread(1, "publisherThread_2", 1)
-    publisher.start()
     Client.initialize(client, publisher)
+    publisher.start()
 
     client.loop_forever()
 
@@ -114,7 +118,12 @@ def init_client():
     global lock
     lock.acquire()
     if not started:
-        started = True
-        thread = threading.Thread(target=start_client_thread)
-        thread.start()
+        try:
+            print("Attempt to connect with mqtt provider at " + MQTT_HOST + ":" + str(MQTT_PORT))
+            started = True
+            thread = threading.Thread(target=start_client_thread)
+            thread.start()
+        except Exception:
+            print("mqtt connection failed...")
+            started = False
     lock.release()

@@ -84,7 +84,14 @@ def publish(name):
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
     try:
-        dev_id, value = msg.payload.decode("UTF-8").split(":")
+        if type(msg.payload) is str:
+            message = msg.payload
+        elif type(msg.payload) is bytes or type(msg.payload) is bytearray:
+            message = msg.payload.decode("UTF-8")
+        else:
+            raise Exception("unknown type: " + type(msg.payload))
+
+        dev_id, value = message.split(":")
         value = value.split(";")[0]
         if msg.topic == POWER_TOPIC:
             consumption = Consumption.objects.create(

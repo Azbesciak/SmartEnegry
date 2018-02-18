@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit {
     }},
     {name: "All", fun: () => {this.dateFrom = null; this.dateTo = null}}
   ];
+  isLoading: boolean;
 
   private getEndOfTheDay() {
     const date = new Date();
@@ -62,19 +63,26 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.data.getDevices()
       .then((devs: Array<Device>) => this.devices = devs);
-    this.data.getConsumptions().then((c: Consumption[]) => this.consumptionsBus.next(c))
+    this.fetchConsumptions(() => this.data.getConsumptions())
   }
 
+
+  private fetchConsumptions(fun: () => Promise<any>) {
+    this.isLoading = true;
+    fun().then(c => this.consumptionsBus.next(c))
+      .then(() => this.isLoading = false)
+      .catch(e => this.isLoading = false)
+  }
 
   getConsumptions() {
     let devicesIds = this.devicesView.selectedOptions.selected
       .map(x => x.value.id)
       .join(",");
-    this.data.getConsumptionsBetween(
+    this.fetchConsumptions(() =>  this.data.getConsumptionsBetween(
       devicesIds,
       this.dateFrom ? this.dateFrom.getTime() : 0,
       this.dateTo ? this.dateTo.getTime() : this.getEndOfTheDay().getTime()
-    ).then((c: Consumption[]) => this.consumptionsBus.next(c))
+    ));
   }
 
   canSearch() {

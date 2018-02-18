@@ -5,6 +5,7 @@ import {UiModule} from "../functional/ui/ui.module";
 import {FunctionalModule} from "../functional/functional.module";
 import {DndModule} from "ng2-dnd";
 import {NgxChartsModule} from "@swimlane/ngx-charts";
+import { ChartComponent } from './chart/chart.component';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import {NgxChartsModule} from "@swimlane/ngx-charts";
   ],
   exports: [HomeComponent],
   declarations: [
-    HomeComponent
+    HomeComponent,
+    ChartComponent
   ]
 })
 export class MainModule { }

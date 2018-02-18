@@ -1,25 +1,16 @@
-<ngx-charts-line-chart
-  [view]="view"
-  [scheme]="colorScheme"
-  [results]="chartData"
-  [gradient]="gradient"
-  [xAxis]="showXAxis"
-  [yAxis]="showYAxis"
-  [legend]="showLegend"
-  [showXAxisLabel]="showXAxisLabel"
-  [showYAxisLabel]="showYAxisLabel"
-  [xAxisLabel]="xAxisLabel"
-  [yAxisLabel]="yAxisLabel"
-  [autoScale]="autoScale"
-  (select)="onSelect($event)">
-</ngx-charts-line-chart>
+<app-chart [chartDataBus]="chartDataBus"></app-chart>
 <div>
   <md2-datepicker type="datetime" [(ngModel)]="dateFrom"></md2-datepicker>
   <md2-datepicker type="datetime" [(ngModel)]="dateTo"></md2-datepicker>
   <button mat-button (click)="getConsumptions()" [disabled]="!canSearch()">Search</button>
 </div>
+<mat-select placeholder="granulation" [(value)]="currentGranulation" (selectionChange)="onGranulationChange($event)">
+  <mat-option *ngFor="let g of granulations" [value]="g">
+    {{ g.type }}
+  </mat-option>
+</mat-select>
 <mat-select placeholder="Device" [(value)]="deviceId">
-  <mat-option *ngFor="let dev of devices" [value]="dev.id">
+  <mat-option *ngFor="let dev of devices" [value]="dev">
     {{ dev.id }}
   </mat-option>
 </mat-select>

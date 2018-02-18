@@ -7,7 +7,6 @@ import {DataService} from "./functional/data/data.service";
 import {FormsModule} from "@angular/forms";
 import {FunctionalModule} from "./functional/functional.module";
 import {MainModule} from "./main/main.module";
-import {NgxChartsModule} from "@swimlane/ngx-charts";
 
 @NgModule({
   declarations: [

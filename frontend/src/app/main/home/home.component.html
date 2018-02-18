@@ -9,8 +9,21 @@
     {{ g.type }}
   </mat-option>
 </mat-select>
-<mat-select placeholder="Device" [(value)]="deviceId">
-  <mat-option *ngFor="let dev of devices" [value]="dev">
-    {{ dev.id }}
-  </mat-option>
-</mat-select>
+
+<mat-selection-list #devicesView>
+  <h3 mat-subheader>Devices</h3>
+  <mat-list-option *ngFor="let dev of devices" [checkboxPosition]="before" [value]="dev">
+    <div>
+      <div>
+        {{ dev.id }}
+        <mat-slide-toggle [checked]="dev.state" (click)="stopProp($event)" (change)="onStateChange($event, dev)"
+                          labelPosition="before">
+          State
+        </mat-slide-toggle>
+      </div>
+      <div>
+        {{ dev.description }}
+      </div>
+    </div>
+  </mat-list-option>
+</mat-selection-list>

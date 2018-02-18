@@ -22,7 +22,8 @@ export class ChartComponent implements OnInit {
   xAxisLabel = 'Time';
   showYAxisLabel = true;
   yAxisLabel = 'Consumption';
-
+// line, area
+  autoScale = true;
   chartData: ChartSeries[] = [];
 
   @Input()

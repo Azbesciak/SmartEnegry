@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {
   MatToolbarModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule,
-  MatIconModule, MatDialogModule, ShowOnDirtyErrorStateMatcher, ErrorStateMatcher,
-  MatButtonToggleModule, MatTooltipModule, MatOptionModule, MatSelectModule,
+  MatIconModule, MatDialogModule,
+  MatButtonToggleModule, MatTooltipModule, MatOptionModule, MatSelectModule, MatListModule, MatSlideToggleModule,
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Md2DatepickerModule, MdNativeDateModule} from "md2";
@@ -25,6 +25,8 @@ const MATERIAL_MODULES = [
   MatTooltipModule,
   Md2DatepickerModule,
   MdNativeDateModule,
+  MatListModule,
+  MatSlideToggleModule
 ];
 
 @NgModule({

@@ -12,7 +12,7 @@ export class DataService {
     return this.get("consumptions")
   }
 
-  getConsumptionsBetween(devId: number, dateFrom: number, dateTo: number) {
+  getConsumptionsBetween(devId: string, dateFrom: number, dateTo: number) {
     return this.get(`consumptions/${devId}/${dateFrom}/${dateTo}`)
   }
 
@@ -24,8 +24,15 @@ export class DataService {
     return this.get(`device/${id}`)
   }
 
+  changeDeviceState(id, isEnabled) {
+    return this.post(`device/${id}/${isEnabled ? 1 : 0}`)
+  }
+
   get(url) {
     return this.http.get(toApi(url)).toPromise()
+  }
+  post(url) {
+    return this.http.post(toApi(url), {}).toPromise()
   }
 }
 

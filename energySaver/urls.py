@@ -20,8 +20,6 @@ from django.contrib import admin
 
 from django.conf.urls import url, include
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

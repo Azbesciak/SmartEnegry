@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "../../functional/data/data.service";
 import {from} from 'rxjs/observable/from';
 import {groupBy, map, mergeMap, toArray} from 'rxjs/operators';
 import "rxjs/add/operator/toArray"
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {ChartSeries, ChartValue, Consumption, Device, Granulation} from "../models/models";
-import {MatSelectChange} from "@angular/material";
+import {MatSelectChange, MatSelectionList} from "@angular/material";
 
 @Component({
   selector: 'app-home',
@@ -18,7 +18,8 @@ export class HomeComponent implements OnInit {
   devices: Array<Device>;
   consumptions: Consumption[] = [];
   chartDataBus = new BehaviorSubject<ChartSeries[]>([]);
-  deviceId;
+  @ViewChild('devicesView')
+  devicesView: MatSelectionList;
 
   granulations = [
     new Granulation("Hour", val => ChartValue.fromTime(val.value, val.name.setMinutes(0, 0, 0))),
@@ -31,9 +32,6 @@ export class HomeComponent implements OnInit {
     })
   ];
 
-
-  // line, area
-  autoScale = true;
   currentGranulation: Granulation;
 
   constructor(private data: DataService) {
@@ -48,8 +46,11 @@ export class HomeComponent implements OnInit {
 
 
   getConsumptions() {
+    let devicesIds = this.devicesView.selectedOptions.selected
+      .map(x => x.value.id)
+      .join(",");
     this.data.getConsumptionsBetween(
-      this.deviceId,
+      devicesIds,
       this.dateFrom ? this.dateFrom.getTime() : 0,
       this.dateTo ? this.dateTo.getTime() : new Date().getTime()
     ).then(c => this.groupConsumptions(c))
@@ -68,10 +69,21 @@ export class HomeComponent implements OnInit {
   }
 
   canSearch() {
-    return this.deviceId != null && this.deviceId != undefined
+    return this.devicesView.selectedOptions.selected.length > 0
   }
 
   onGranulationChange($event: MatSelectChange) {
     this.groupConsumptions(this.consumptions)
+  }
+
+  onStateChange(event, dev: Device) {
+    this.data.changeDeviceState(dev.id, event.checked)
+      .then((x: Device) => dev.state = x.state)
+      .catch()
+
+  }
+
+  stopProp($event) {
+    $event.stopPropagation()
   }
 }

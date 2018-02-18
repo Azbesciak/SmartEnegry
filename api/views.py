@@ -1,6 +1,7 @@
 import datetime
 
 from django.http import JsonResponse
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 
@@ -20,6 +21,10 @@ def get_devices(dev, many=True):
 
 def tsTodate(ts):
     return datetime.datetime.utcfromtimestamp(int(ts)/1000).strftime('%Y-%m-%d %H:%M:%S')
+
+
+def index(request, path=''):
+    return render(request, template_name='index.html')
 
 
 @api_view(['GET'])

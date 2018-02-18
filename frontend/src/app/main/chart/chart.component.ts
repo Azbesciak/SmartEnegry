@@ -20,7 +20,7 @@ export class ChartComponent implements OnInit {
   showXAxisLabel = true;
   xAxisLabel = 'Time';
   showYAxisLabel = true;
-  yAxisLabel = 'Consumption';
+  yAxisLabel = 'Consumption [W]';
 // line, area
   autoScale = true;
   chartData: ChartSeries[] = [];

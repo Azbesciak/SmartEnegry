@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^consumptions/(?P<devices_ids>[\d]+(,[\d]+)*)/(?P<date_from>\d+)/(?P<date_to>\d+)/$', views.consumption_between),
     url(r'^device/(?P<device_id>\d+)/(?P<state>[01])/$', views.change_state),
     url(r'^device/$', views.devices),
+    url('', views.index),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

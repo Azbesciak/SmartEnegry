@@ -83,17 +83,22 @@ def publish(name):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
-    if msg.topic == POWER_TOPIC:
-        # TODO value ?
-        consumption = Consumption.objects.create(
-            device_id=DEVICE_ID, value=msg.payload,
-            measure_time=strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-        consumption.save()
+    try:
+        dev_id, value = msg.payload.decode("UTF-8").split(":")
+        value = value.split(";")[0]
+        if msg.topic == POWER_TOPIC:
+            consumption = Consumption.objects.create(
+                device_id=dev_id, value=float(value),
+                measure_time=strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+            consumption.save()
 
-    elif msg.topic == STATE_CHANGE_RESPONSE or msg.topic == CURRENT_STATE_RESPONSE:
-        Device.update_state(DEVICE_ID, msg.payload)
-    else:
-        print("not Managed...")
+        elif msg.topic == STATE_CHANGE_RESPONSE or msg.topic == CURRENT_STATE_RESPONSE:
+            Device.update_state(dev_id, value)
+            print("state of device " + str(dev_id) + " has changed to " + str(value))
+        else:
+            print("not Managed...")
+    except Exception as e:
+        print("Error on MQTT with "": " + str(e))
 
 
 def start_client_thread():
@@ -123,7 +128,7 @@ def init_client():
             started = True
             thread = threading.Thread(target=start_client_thread)
             thread.start()
-        except Exception:
-            print("mqtt connection failed...")
+        except Exception as e:
+            print("mqtt connection failed...: " + str(e))
             started = False
     lock.release()

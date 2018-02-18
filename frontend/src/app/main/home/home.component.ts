@@ -1,11 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "../../functional/data/data.service";
-import {from} from 'rxjs/observable/from';
-import {groupBy, map, mergeMap, toArray} from 'rxjs/operators';
 import "rxjs/add/operator/toArray"
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {ChartSeries, ChartValue, Consumption, Device, Granulation} from "../models/models";
-import {MatSelectChange, MatSelectionList} from "@angular/material";
+import {Consumption, Device} from "../models/models";
+import {MatRadioGroup, MatSelectionList} from "@angular/material";
+import {Md2Datepicker} from "md2";
 
 @Component({
   selector: 'app-home',
@@ -17,31 +16,53 @@ export class HomeComponent implements OnInit {
   dateFrom: Date;
   devices: Array<Device>;
   consumptions: Consumption[] = [];
-  chartDataBus = new BehaviorSubject<ChartSeries[]>([]);
+  maxDate = this.getEndOfTheDay();
+  consumptionsBus = new BehaviorSubject<Consumption[]>([]);
   @ViewChild('devicesView')
   devicesView: MatSelectionList;
 
-  granulations = [
-    new Granulation("Hour", val => ChartValue.fromTime(val.value, val.name.setMinutes(0, 0, 0))),
-    new Granulation("Day", val => ChartValue.fromTime(val.value, val.name.setHours(0, 0, 0, 0))),
-    new Granulation("Week", val => {
-      const temp = new Date(val.name);
-      temp.setHours(0, 0, 0, 0);
-      temp.setDate(temp.getDate() - temp.getDay() + 1);
-      return new ChartValue(val.value, temp);
-    })
+  @ViewChild('dateIntervalRadio')
+  dateIntervalRadio: MatRadioGroup;
+
+  @ViewChild("dateFromDatePick")
+  dateFromDatePick: Md2Datepicker;
+
+  @ViewChild("dateToDatePick")
+  dateToDatePick: Md2Datepicker;
+
+  selectedDateInterval = null;
+
+  dateIntervals = [
+    {name: "Today", fun: () => {
+      this.dateFrom = new Date();
+      this.dateFrom.setHours(0,0,0,0);
+    }},
+    {name: "Last week", fun: () => {
+      this.dateFrom = new Date();
+      this.dateFrom.setHours(0,0,0,0);
+      this.dateFrom.setDate(this.dateFrom.getDate() - 7);
+    }},
+    {name: "Last month", fun: () => {
+      this.dateFrom = new Date();
+      this.dateFrom.setHours(0,0,0,0);
+      this.dateFrom.setMonth(this.dateFrom.getMonth() - 1);
+    }},
+    {name: "All", fun: () => {this.dateFrom = null; this.dateTo = null}}
   ];
 
-  currentGranulation: Granulation;
+  private getEndOfTheDay() {
+    const date = new Date();
+    date.setHours(23,59,59,999);
+    return date;
+  }
 
   constructor(private data: DataService) {
   }
 
   ngOnInit(): void {
-  this.currentGranulation = this.granulations[0];
     this.data.getDevices()
       .then((devs: Array<Device>) => this.devices = devs);
-    this.data.getConsumptions().then(c => this.groupConsumptions(c))
+    this.data.getConsumptions().then((c: Consumption[]) => this.consumptionsBus.next(c))
   }
 
 
@@ -52,30 +73,13 @@ export class HomeComponent implements OnInit {
     this.data.getConsumptionsBetween(
       devicesIds,
       this.dateFrom ? this.dateFrom.getTime() : 0,
-      this.dateTo ? this.dateTo.getTime() : new Date().getTime()
-    ).then(c => this.groupConsumptions(c))
-  }
-
-
-  private groupConsumptions(consumptions) {
-    this.consumptions = consumptions;
-    from(consumptions)
-      .pipe(
-        groupBy((c: Consumption) => c.device_id),
-        mergeMap(g => g.toArray()),
-        map(x => new ChartSeries(x, this.currentGranulation)),
-        toArray()
-      ).subscribe(x => this.chartDataBus.next(x))
+      this.dateTo ? this.dateTo.getTime() : this.getEndOfTheDay().getTime()
+    ).then((c: Consumption[]) => this.consumptionsBus.next(c))
   }
 
   canSearch() {
     return this.devicesView.selectedOptions.selected.length > 0
   }
-
-  onGranulationChange($event: MatSelectChange) {
-    this.groupConsumptions(this.consumptions)
-  }
-
   onStateChange(event, dev: Device) {
     this.data.changeDeviceState(dev.id, event.checked)
       .then((x: Device) => dev.state = x.state)
@@ -85,5 +89,16 @@ export class HomeComponent implements OnInit {
 
   stopProp($event) {
     $event.stopPropagation()
+  }
+
+  onDateIntervalChange($event) {
+    this.selectedDateInterval = $event.value;
+    console.log(this.selectedDateInterval);
+    this.dateTo = null;
+    this.selectedDateInterval.fun();
+  }
+
+  onDateChange() {
+    this.selectedDateInterval = null;
   }
 }

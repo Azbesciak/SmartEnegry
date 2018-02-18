@@ -1,29 +1,38 @@
-<app-chart [chartDataBus]="chartDataBus"></app-chart>
-<div>
-  <md2-datepicker type="datetime" [(ngModel)]="dateFrom"></md2-datepicker>
-  <md2-datepicker type="datetime" [(ngModel)]="dateTo"></md2-datepicker>
-  <button mat-button (click)="getConsumptions()" [disabled]="!canSearch()">Search</button>
-</div>
-<mat-select placeholder="granulation" [(value)]="currentGranulation" (selectionChange)="onGranulationChange($event)">
-  <mat-option *ngFor="let g of granulations" [value]="g">
-    {{ g.type }}
-  </mat-option>
-</mat-select>
-
-<mat-selection-list #devicesView>
-  <h3 mat-subheader>Devices</h3>
-  <mat-list-option *ngFor="let dev of devices" [checkboxPosition]="before" [value]="dev">
-    <div>
-      <div>
-        {{ dev.id }}
+<div class="wrapper">
+  <mat-card class="chart">
+    <mat-card-title style="text-align: center">
+      Energy Consumption by devices
+    </mat-card-title>
+    <mat-card-content>
+        <app-chart [consumptionsBus]="consumptionsBus"></app-chart>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <md2-datepicker type="datetime" [(ngModel)]="dateFrom" placeholder="Date from" #dateFromDatePick
+                    (change)="onDateChange()" [max]="dateTo || maxDate">
+    </md2-datepicker>
+    <md2-datepicker type="datetime" [(ngModel)]="dateTo" placeholder="Date to" #dateToDatePick
+                    (change)="onDateChange()" [max]="maxDate" [min]="dateFrom">
+    </md2-datepicker>
+    <mat-radio-group #dateIntervalRadio (change)="onDateIntervalChange($event)" [value]="selectedDateInterval">
+      <mat-radio-button *ngFor="let inter of dateIntervals" [value]="inter">
+        {{ inter.name }}
+      </mat-radio-button>
+    </mat-radio-group>
+    <button mat-raised-button color="primary" (click)="getConsumptions()" [disabled]="!canSearch()">Search</button>
+  </mat-card>
+  <mat-card>
+    <mat-selection-list #devicesView>
+      <h3 mat-subheader>Devices</h3>
+      <mat-list-option *ngFor="let dev of devices" [checkboxPosition]="before" [value]="dev" class="device">
+        <app-key-value key="Id" [value]="dev.id" class="id-wrap"></app-key-value>
         <mat-slide-toggle [checked]="dev.state" (click)="stopProp($event)" (change)="onStateChange($event, dev)"
-                          labelPosition="before">
+                          labelPosition="before" class="state-toggle">
           State
         </mat-slide-toggle>
-      </div>
-      <div>
-        {{ dev.description }}
-      </div>
-    </div>
-  </mat-list-option>
-</mat-selection-list>
+        <app-key-value key="description" [value]="dev.description" class="description"></app-key-value>
+      </mat-list-option>
+    </mat-selection-list>
+
+  </mat-card>
+</div>

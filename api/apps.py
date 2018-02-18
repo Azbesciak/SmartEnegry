@@ -6,7 +6,3 @@ from api.client import init_client
 
 class ApiConfig(AppConfig):
     name = 'api'
-    
-    def ready(self):
-        init_client()
-    

@@ -11,6 +11,16 @@ class Device(models.Model):
     def __str__(self):
         return "id=" + str(self.id) + ", des=" + self.description
 
+    @classmethod
+    def update_state(cls, device_id, state):
+        try:
+            dev = Device.objects.get(id=device_id)
+        except Device.DoesNotExist:
+            return None
+        dev.state = state
+        dev.save()
+        return dev
+
 
 class Consumption(models.Model):
     measure_time = models.DateTimeField('date of measurement')

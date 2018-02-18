@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit {
   }
 
   canSearch() {
-    return this.devicesView.selectedOptions.selected.length > 0
+    return this.devicesView.selectedOptions.selected.length > 0 && !this.isLoading
   }
   onStateChange(event, dev: Device) {
     this.data.changeDeviceState(dev.id, event.checked)

@@ -31,6 +31,8 @@ export class ChartComponent implements OnInit {
   currentGranulation: Granulation;
 
   granulations = [
+    new Granulation("Seconds", val => ChartValue.fromTime(val.value, val.name.setMilliseconds(0))),
+    new Granulation("Minutes", val => ChartValue.fromTime(val.value, val.name.setSeconds(0,0))),
     new Granulation("Hour", val => ChartValue.fromTime(val.value, val.name.setMinutes(0, 0, 0))),
     new Granulation("Day", val => ChartValue.fromTime(val.value, val.name.setHours(0, 0, 0, 0))),
     new Granulation("Week", val => {
@@ -59,7 +61,7 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentGranulation = this.granulations[0];
+    this.currentGranulation = this.granulations[2];
     this.consumptionsBus.subscribe(x => this.groupConsumptions(x))
   }
 

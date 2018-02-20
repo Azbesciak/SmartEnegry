@@ -595,6 +595,8 @@ var ChartComponent = /** @class */ (function () {
         this.autoScale = true;
         this.chartData = [];
         this.granulations = [
+            new __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* Granulation */]("Seconds", function (val) { return __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* ChartValue */].fromTime(val.value, val.name.setMilliseconds(0)); }),
+            new __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* Granulation */]("Minutes", function (val) { return __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* ChartValue */].fromTime(val.value, val.name.setSeconds(0, 0)); }),
             new __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* Granulation */]("Hour", function (val) { return __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* ChartValue */].fromTime(val.value, val.name.setMinutes(0, 0, 0)); }),
             new __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* Granulation */]("Day", function (val) { return __WEBPACK_IMPORTED_MODULE_2__models_models__["b" /* ChartValue */].fromTime(val.value, val.name.setHours(0, 0, 0, 0)); }),
             new __WEBPACK_IMPORTED_MODULE_2__models_models__["c" /* Granulation */]("Week", function (val) {
@@ -616,7 +618,7 @@ var ChartComponent = /** @class */ (function () {
     };
     ChartComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.currentGranulation = this.granulations[0];
+        this.currentGranulation = this.granulations[2];
         this.consumptionsBus.subscribe(function (x) { return _this.groupConsumptions(x); });
     };
     __decorate([
@@ -896,7 +898,7 @@ var ChartValue = /** @class */ (function () {
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 var environment = {
     production: false,
-    apiRoot: "http://127.0.0.1:8000"
+    apiRoot: "http://127.0.0.1:8000",
 };
 
 
